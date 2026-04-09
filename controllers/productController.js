@@ -58,8 +58,7 @@ export async function createProduct(req, res) {
 }
 
 export async function getProducts(req, res) {
-
-	
+	console.log("Get products api called")
 	try {
 		if (isAdmin(req)) {
 			const products = await Product.find();
@@ -99,6 +98,7 @@ export async function updateProduct(req, res) {
 		const productId = req.params.productId;
 
 		const data = {};
+		
 
 		if (req.body.name == null) {
 			res.status(400).json({ message: "Product name is required" });
@@ -123,7 +123,9 @@ export async function updateProduct(req, res) {
 		data.brand = req.body.brand || "Generic";
 		data.model = req.body.model || "Standard";
 
-		await Product.updateOne({ productId: productId }, data);
+
+
+		await Product.updateOne({ productId: productId },data);
 
 		res
 			.status(201)
@@ -134,6 +136,7 @@ export async function updateProduct(req, res) {
 }
 
 export async function getProductById(req , res){
+	console.log("Get product by id api called")
     try{
 
         const productId = req.params.productId;
@@ -157,6 +160,29 @@ export async function getProductById(req , res){
     }
 }
 
-export async function searchProducts(req,res){
-	
+export async function searchProducts(req , res){
+
+	const query = req.params?.query||"";
+
+	try{
+
+		const products = await Product.find(
+			{ 
+				$or : [
+					{ name : { $regex : query , $options : "i" } },
+					{description : { $regex : query , $options : "i" } },
+					{ altNames: { $elemMatch: { $regex: query, $options: "i" } } }
+				],
+				isVisible : true				
+			}
+		)
+
+		res.status(200).json(products);
+
+
+
+	}catch(error){
+		res.status(500).json({message : "Error searching products" , error : error});
+	}
+
 }
