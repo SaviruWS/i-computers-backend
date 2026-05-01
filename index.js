@@ -6,6 +6,7 @@ import authorizeUser from './lib/jwtMiddleware.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import orderRouter from './router/orderRouter.js'
+import reviewRouter from './router/reviewRouter.js' 
 
 dotenv.config()
 
@@ -38,6 +39,7 @@ app.use(authorizeUser)
 app.use("/api/users", userRouter)
 app.use("/api/products", productRouter)
 app.use("/api/orders", orderRouter)
+app.use("/api/reviews", reviewRouter)
 
 
 app.listen(3000, ()=>{
